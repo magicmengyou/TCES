@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>培训中心电子存档管理系统</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>培训中心电子存档管理系统</h1>
+            <nav>
+                <ul>
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#courses">课程档案</a></li>
+                    <li><a href="#storage">存储配置</a></li>
+                    <li><a href="#database">数据库配置</a></li>
+                    <li><a href="#admin">管理面板</a></li>
+                </ul>
+            </nav>
+            <div id="userInfo" class="user-info"></div>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <h2>欢迎使用电子存档管理系统</h2>
+                <p>本系统用于管理培训中心的所有电子档案，支持多种云存储和数据库配置。</p>
+                
+                <!-- 学生信息区域 -->
+                <section id="studentSection" class="student-section" style="display: none;">
+                    <!-- 学生信息将通过JavaScript动态加载 -->
+                </section>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>多云存储支持</h3>
+                        <p>支持NAS、百度网盘、迅雷网盘、夸克网盘等多种存储方式</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>多数据库支持</h3>
+                        <p>可配置多种数据库存储用户账号信息</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>灵活配置</h3>
+                        <p>可指定单一存储或同时存储多份数据</p>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="搜索课程、讲师或学员...">
+                    <button onclick="performSearch()">搜索</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses" class="content-section">
+            <div class="container">
+                <h2>课程档案</h2>
+                <div class="archive-grid" id="coursesGrid">
+                    <!-- 课程档案将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </section>
+
+        <section id="storage" class="content-section">
+            <div class="container">
+                <h2>存储配置</h2>
+                <div class="config-panel">
+                    <h3>云存储服务配置</h3>
+                    <div class="storage-options">
+                        <div class="storage-option">
+                            <input type="checkbox" id="nas-storage" name="storage" value="nas">
+                            <label for="nas-storage">NAS存储</label>
+                        </div>
+                        <div class="storage-option">
+                            <input type="checkbox" id="baidu-storage" name="storage" value="baidu">
+                            <label for="baidu-storage">百度网盘</label>
+                        </div>
+                        <div class="storage-option">
+                            <input type="checkbox" id="xunlei-storage" name="storage" value="xunlei">
+                            <label for="xunlei-storage">迅雷网盘</label>
+                        </div>
+                        <div class="storage-option">
+                            <input type="checkbox" id="quark-storage" name="storage" value="quark">
+                            <label for="quark-storage">夸克网盘</label>
+                        </div>
+                    </div>
+                    <div class="storage-config" id="nas-config" style="display:none;">
+                        <h4>NAS配置</h4>
+                        <label for="nas-address">NAS地址:</label>
+                        <input type="text" id="nas-address" placeholder="例如: 192.168.1.100">
+                        <label for="nas-username">用户名:</label>
+                        <input type="text" id="nas-username">
+                        <label for="nas-password">密码:</label>
+                        <input type="password" id="nas-password">
+                    </div>
+                    <div class="storage-config" id="baidu-config" style="display:none;">
+                        <h4>百度网盘配置</h4>
+                        <label for="baidu-token">Access Token:</label>
+                        <input type="text" id="baidu-token" placeholder="请输入百度网盘API Token">
+                    </div>
+                    <div class="storage-config" id="xunlei-config" style="display:none;">
+                        <h4>迅雷网盘配置</h4>
+                        <label for="xunlei-key">API Key:</label>
+                        <input type="text" id="xunlei-key" placeholder="请输入迅雷网盘API Key">
+                    </div>
+                    <div class="storage-config" id="quark-config" style="display:none;">
+                        <h4>夸克网盘配置</h4>
+                        <label for="quark-cookie">Cookie:</label>
+                        <input type="text" id="quark-cookie" placeholder="请输入夸克网盘Cookie">
+                    </div>
+                    <button onclick="saveStorageConfig()">保存存储配置</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="database" class="content-section">
+            <div class="container">
+                <h2>数据库配置</h2>
+                <div class="config-panel">
+                    <h3>数据库选择</h3>
+                    <div class="database-options">
+                        <div class="database-option">
+                            <input type="radio" id="firebase-db" name="database" value="firebase">
+                            <label for="firebase-db">Firebase</label>
+                        </div>
+                        <div class="database-option">
+                            <input type="radio" id="indexed-db" name="database" value="indexeddb">
+                            <label for="indexed-db">IndexedDB (本地)</label>
+                        </div>
+                        <div class="database-option">
+                            <input type="radio" id="supabase-db" name="database" value="supabase">
+                            <label for="supabase-db">Supabase</label>
+                        </div>
+                    </div>
+                    <div class="database-config" id="firebase-config" style="display:none;">
+                        <h4>Firebase配置</h4>
+                        <label for="firebase-apikey">API Key:</label>
+                        <input type="text" id="firebase-apikey">
+                        <label for="firebase-authdomain">Auth Domain:</label>
+                        <input type="text" id="firebase-authdomain">
+                        <label for="firebase-projectid">Project ID:</label>
+                        <input type="text" id="firebase-projectid">
+                    </div>
+                    <div class="database-config" id="supabase-config" style="display:none;">
+                        <h4>Supabase配置</h4>
+                        <label for="supabase-url">Project URL:</label>
+                        <input type="text" id="supabase-url">
+                        <label for="supabase-key">API Key:</label>
+                        <input type="text" id="supabase-key">
+                    </div>
+                    <button onclick="saveDatabaseConfig()">保存数据库配置</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin" class="content-section">
+            <div class="container">
+                <h2>管理面板</h2>
+                <div class="admin-panel">
+                    <button onclick="showUploadForm('course')">添加课程</button>
+                    <button onclick="showUploadForm('trainer')">添加讲师</button>
+                    <button onclick="showUploadForm('student')">添加学员</button>
+                    
+                    <div id="uploadForm" class="upload-form hidden">
+                        <h3>上传新档案</h3>
+                        <form id="archiveForm">
+                            <label for="archiveType">档案类型:</label>
+                            <select id="archiveType" name="type">
+                                <option value="course">课程</option>
+                                <option value="trainer">讲师</option>
+                                <option value="student">学员</option>
+                            </select>
+                            
+                            <label for="archiveName">名称:</label>
+                            <input type="text" id="archiveName" name="name" required>
+                            
+                            <label for="archiveDescription">描述:</label>
+                            <textarea id="archiveDescription" name="description"></textarea>
+                            
+                            <label for="archiveLinks">文件链接 (多个链接用逗号分隔):</label>
+                            <input type="text" id="archiveLinks" name="links" placeholder="https://example.com/file1.pdf, https://example.com/file2.docx">
+                            
+                            <button type="submit">保存档案</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 培训中心电子存档管理系统. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
