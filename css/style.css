@@ -127,6 +127,12 @@ header h1 {
     border: 1px solid #bee5eb;
 }
 
+.message-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
 /* 加载动画 */
 .loading {
     text-align: center;
