@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCES - 草料二维码数据库查询</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>草料二维码数据库查询工具</h1>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>数据库连接状态</h2>
+            <div id="connection-status" class="message message-info">
+                正在检查数据库连接状态...
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>SQL 查询</h2>
+            <div class="form-group">
+                <label for="sql-query">SQL 查询语句:</label>
+                <textarea id="sql-query" class="form-control" rows="4" placeholder="请输入 SELECT 查询语句，例如: SELECT * FROM table_name LIMIT 10">SELECT * FROM </textarea>
+            </div>
+            
+            <button id="execute-btn" class="btn btn-primary">执行查询</button>
+            
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>正在执行查询，请稍候...</p>
+            </div>
+        </div>
+        
+        <div id="result-container" class="card hidden">
+            <h2>查询结果</h2>
+            <div id="result-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后检查数据库连接
+        document.addEventListener('DOMContentLoaded', function() {
+            checkConnection();
+            setupEventListeners();
+        });
+
+        // 检查数据库连接
+        function checkConnection() {
+            fetch('/api/test-connection')
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('connection-status');
+                    if (data.success) {
+                        statusElement.className = 'message message-success';
+                        statusElement.textContent = '数据库连接成功！您可以开始执行查询了。';
+                    } else {
+                        statusElement.className = 'message message-error';
+                        statusElement.textContent = '数据库连接失败: ' + data.message;
+                    }
+                })
+                .catch(error => {
+                    const statusElement = document.getElementById('connection-status');
+                    statusElement.className = 'message message-error';
+                    statusElement.textContent = '无法连接到服务器: ' + error.message;
+                });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('execute-btn').addEventListener('click', executeQuery);
+        }
+
+        // 执行查询
+        function executeQuery() {
+            const sqlQuery = document.getElementById('sql-query').value.trim();
+            
+            if (!sqlQuery) {
+                alert('请输入SQL查询语句');
+                return;
+            }
+            
+            // 显示加载状态
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result-container').classList.add('hidden');
+            
+            // 发送查询请求
+            fetch('/api/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sql: sqlQuery })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 隐藏加载状态
+                document.getElementById('loading').classList.add('hidden');
+                
+                if (data.success) {
+                    displayResults(data.data);
+                } else {
+                    showError(data.message);
+                }
+            })
+            .catch(error => {
+                // 隐藏加载状态
+                document.getElementById('loading').classList.add('hidden');
+                showError('查询执行出错: ' + error.message);
+            });
+        }
+
+        // 显示查询结果
+        function displayResults(data) {
+            const resultContainer = document.getElementById('result-container');
+            const resultContent = document.getElementById('result-content');
+            
+            if (!data || data.length === 0) {
+                resultContent.innerHTML = '<p>查询结果为空</p>';
+            } else {
+                // 生成表格
+                let tableHtml = '<div class="table-container"><table><thead><tr>';
+                
+                // 表头
+                const keys = Object.keys(data[0]);
+                keys.forEach(key => {
+                    tableHtml += `<th>${key}</th>`;
+                });
+                
+                tableHtml += '</tr></thead><tbody>';
+                
+                // 表数据
+                data.forEach(row => {
+                    tableHtml += '<tr>';
+                    keys.forEach(key => {
+                        tableHtml += `<td>${row[key] !== null ? row[key] : 'NULL'}</td>`;
+                    });
+                    tableHtml += '</tr>';
+                });
+                
+                tableHtml += '</tbody></table></div>';
+                resultContent.innerHTML = tableHtml;
+            }
+            
+            resultContainer.classList.remove('hidden');
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const resultContainer = document.getElementById('result-container');
+            const resultContent = document.getElementById('result-content');
+            
+            resultContent.innerHTML = `<div class="message message-error">${message}</div>`;
+            resultContainer.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
