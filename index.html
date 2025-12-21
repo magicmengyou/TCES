@@ -23,15 +23,10 @@
             <h2>SQL 查询</h2>
             <div class="form-group">
                 <label for="sql-query">SQL 查询语句:</label>
-                <textarea id="sql-query" class="form-control" rows="4" placeholder="请输入 SELECT 查询语句，例如: SELECT * FROM table_name LIMIT 10">SELECT * FROM </textarea>
+                <textarea id="sql-query" class="form-control" rows="4" placeholder="请输入 SELECT 查询语句，例如: SELECT * FROM table_name LIMIT 10">SELECT * FROM base_codeinfo LIMIT 100</textarea>
             </div>
             
             <button id="execute-btn" class="btn btn-primary">执行查询</button>
-            
-            <div id="loading" class="loading hidden">
-                <div class="spinner"></div>
-                <p>正在执行查询，请稍候...</p>
-            </div>
         </div>
         
         <div id="result-container" class="card hidden">
@@ -82,8 +77,7 @@
                 return;
             }
             
-            // 显示加载状态
-            document.getElementById('loading').classList.remove('hidden');
+            // 隐藏结果容器
             document.getElementById('result-container').classList.add('hidden');
             
             // 发送查询请求
@@ -96,9 +90,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                // 隐藏加载状态
-                document.getElementById('loading').classList.add('hidden');
-                
                 if (data.success) {
                     displayResults(data.data);
                 } else {
@@ -106,8 +97,6 @@
                 }
             })
             .catch(error => {
-                // 隐藏加载状态
-                document.getElementById('loading').classList.add('hidden');
                 showError('查询执行出错: ' + error.message);
             });
         }

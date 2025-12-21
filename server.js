@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -9,7 +10,14 @@ const port = process.env.PORT || 3000;
 // 中间件
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+
+// 设置静态文件目录
+app.use(express.static(path.join(__dirname)));
+
+// 设置根路径路由
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // 创建数据库连接池
 const pool = mysql.createPool({
